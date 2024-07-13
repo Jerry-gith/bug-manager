@@ -1,16 +1,20 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
-import { Button, TextField } from "@radix-ui/themes";
+import { Button, Callout, TextField } from "@radix-ui/themes";
+import { MdErrorOutline } from "react-icons/md";
 import SimpleMDE from "react-simplemde-editor";
 import { useRouter } from "next/navigation";
 import "easymde/dist/easymde.min.css";
 import axios from "axios";
+import Spinner from "@/components/Spinner";
 
 const NewBugPage = () => {
   const router = useRouter();
+  const [error, setError] = useState("");
   const [bugTitle, setBugTitle] = useState("");
   const [bugDescription, setBugDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = () => {
     const bugTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,29 +38,53 @@ const NewBugPage = () => {
       description: bugDescription,
     };
 
-    console.log(bugDetails);
-    await axios.post("/api/bugs", bugDetails);
-
-    router.push("/bugs");
+    try {
+      setIsSubmitting(true);
+      await axios.post("/api/bugs", bugDetails);
+      router.push("/bugs");
+    } catch (error) {
+      setIsSubmitting(false);
+      setError(`${error}`);
+    }
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <h2 className="">New Bug Page</h2>
-      <TextField.Root
-        variant="surface"
-        placeholder="What's the bug…"
-        value={bugTitle}
-        onChange={bugTitleChange}
-      />
+    <div>
+      {error && (
+        <Callout.Root variant="surface" color="red" className="mb-4">
+          <Callout.Icon>
+            <MdErrorOutline />
+          </Callout.Icon>
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
 
-      <SimpleMDE
-        placeholder="Describe the bug…"
-        value={bugDescription}
-        onChange={bugDescriptionChange}
-      />
-      <Button>Submit New Bug</Button>
-    </form>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <h2 className="">New Bug Page</h2>
+        <TextField.Root
+          variant="surface"
+          placeholder="What's the bug…"
+          value={bugTitle}
+          onChange={bugTitleChange}
+        />
+
+        <SimpleMDE
+          placeholder="Describe the bug…"
+          value={bugDescription}
+          onChange={bugDescriptionChange}
+        />
+        
+        <Button disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              Submitting <Spinner />
+            </>
+          ) : (
+            "Submit New Bug"
+          )}
+        </Button>
+      </form>
+    </div>
   );
 };
 

@@ -3,7 +3,7 @@ import { Button } from "@radix-ui/themes";
 
 const BugsPage = () => {
   return (
-    <div>
+    <div className="space-y-4">
       <h2>Bugs Page</h2>
       <Button><Link href={"/bugs/new"}>New Bug</Link></Button>
     </div>
