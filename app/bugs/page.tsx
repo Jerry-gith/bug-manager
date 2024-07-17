@@ -1,17 +1,18 @@
 import BugStatusBadge from "@/components/BugStatusBadge";
 import prisma from "@/prisma/client";
 import { Button, Table } from "@radix-ui/themes";
-import Link from "next/link";
+import BugToolBar from "./BugToolBar";
+import delay from "delay";
 
 const BugsPage = async () => {
   const bugs = await prisma.bug.findMany();
+  await delay(2000)
 
   return (
     <div className="space-y-4">
       <h2>Bugs Page</h2>
-      <Button>
-        <Link href={"/bugs/new"}>New Bug</Link>
-      </Button>
+
+      <BugToolBar />
 
       <Table.Root variant="surface">
         <Table.Header>
