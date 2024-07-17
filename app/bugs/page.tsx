@@ -1,12 +1,13 @@
 import BugStatusBadge from "@/components/BugStatusBadge";
 import prisma from "@/prisma/client";
-import { Button, Table } from "@radix-ui/themes";
+import { Link as RadixLink, Table } from "@radix-ui/themes";
 import BugToolBar from "./BugToolBar";
 import delay from "delay";
+import Link from "next/link";
 
 const BugsPage = async () => {
   const bugs = await prisma.bug.findMany();
-  await delay(2000)
+  await delay(2000);
 
   return (
     <div className="space-y-4">
@@ -31,7 +32,10 @@ const BugsPage = async () => {
           {bugs.map((bug) => (
             <Table.Row key={bug.id}>
               <Table.Cell>
-                {bug.title}
+                <Link href={`/bugs/${bug.id}`} legacyBehavior>
+                  <RadixLink>{bug.title}</RadixLink>
+                </Link>
+
                 <small className="block mt-2 md:hidden">
                   <BugStatusBadge status={bug.status} />
                 </small>
