@@ -1,3 +1,4 @@
+import BugStatusBadge from "@/components/BugStatusBadge";
 import prisma from "@/prisma/client";
 import { Button, Table } from "@radix-ui/themes";
 import Link from "next/link";
@@ -16,8 +17,12 @@ const BugsPage = async () => {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeaderCell>Bugs</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">Status</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">Date</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              Status
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="hidden md:table-cell">
+              Date
+            </Table.ColumnHeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -26,10 +31,16 @@ const BugsPage = async () => {
             <Table.Row key={bug.id}>
               <Table.Cell>
                 {bug.title}
-                <small className="block text-gray-500 md:hidden">{bug.status}</small>
+                <small className="block mt-2 md:hidden">
+                  <BugStatusBadge status={bug.status} />
+                </small>
               </Table.Cell>
-              <Table.Cell className="hidden md:table-cell">{bug.status}</Table.Cell>
-              <Table.Cell className="hidden md:table-cell">{bug.createdAt.toDateString()}</Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                <BugStatusBadge status={bug.status} />
+              </Table.Cell>
+              <Table.Cell className="hidden md:table-cell">
+                {bug.createdAt.toDateString()}
+              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
