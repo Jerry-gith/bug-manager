@@ -42,6 +42,7 @@ const NewBugPage = () => {
       setIsSubmitting(true);
       await axios.post("/api/bugs/create", bugDetails);
       router.push("/bugs");
+      router.refresh()
     } catch (error) {
       setIsSubmitting(false);
       setError(`${error}`);

@@ -2,7 +2,7 @@ import { editBugSchema } from "@/app/api/Schema";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   const editedBugData = await request.json();
   const validatedBugData = editBugSchema.safeParse(editedBugData);
 

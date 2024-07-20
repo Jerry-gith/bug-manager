@@ -68,8 +68,9 @@ const EditBug = () => {
 
     try {
       setIsSubmitting(true);
-      await axios.post("/api/bugs/edit/edit-bug", bugDetails);
+      await axios.patch("/api/bugs/edit/edit-bug", bugDetails);
       router.push(`/bugs/${id}/`);
+      router.refresh()
     } catch (error) {
       setIsSubmitting(false);
       setError(`${error}`);
