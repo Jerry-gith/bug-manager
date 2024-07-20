@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { createBugSchema } from "../Schema";
+import { createBugSchema } from "../../Schema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {

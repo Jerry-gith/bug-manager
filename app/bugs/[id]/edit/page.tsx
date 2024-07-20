@@ -4,26 +4,53 @@ import Spinner from "@/components/Spinner";
 import { Button, Callout, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import { MdErrorOutline } from "react-icons/md";
 import SimpleMDE from "react-simplemde-editor";
 
-const NewBugPage = () => {
+const EditBug = () => {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const [bugTitle, setBugTitle] = useState("");
-  const [bugDescription, setBugDescription] = useState("");
+  const params = useParams();
+  const id = params.id;
+
+  const [bug, setBug] = useState<{
+    title?: string;
+    description?: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .post("/api/bugs/edit/get-bug", { id })
+        .then((response) => {
+          setBug(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error sending ID to backend:", error);
+          setError("Failed to fetch bug details");
+          setLoading(false);
+        });
+    }
+  }, [id]);
 
   const handleChange = () => {
     const bugTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const title = e.target.value;
-      setBugTitle(title);
+      setBug({ ...bug, title: e.target.value });
     };
-    const bugDescriptionChange = useCallback((value: string) => {
-      setBugDescription(value);
-    }, []);
+
+    const bugDescriptionChange = (value: string) => {
+      setBug({ ...bug, description: value });
+    };
 
     return { bugTitleChange, bugDescriptionChange };
   };
@@ -34,14 +61,15 @@ const NewBugPage = () => {
     e.preventDefault();
 
     const bugDetails = {
-      title: bugTitle,
-      description: bugDescription,
+      id: id,
+      title: bug?.title,
+      description: bug?.description,
     };
 
     try {
       setIsSubmitting(true);
-      await axios.post("/api/bugs/create", bugDetails);
-      router.push("/bugs");
+      await axios.post("/api/bugs/edit/edit-bug", bugDetails);
+      router.push(`/bugs/${id}/`);
     } catch (error) {
       setIsSubmitting(false);
       setError(`${error}`);
@@ -60,27 +88,22 @@ const NewBugPage = () => {
       )}
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <h2 className="">New Bug Page</h2>
+        <h2 className="">Edit Bug Page</h2>
         <TextField.Root
           variant="surface"
-          placeholder="What's the bug…"
-          value={bugTitle}
+          value={bug?.title}
           onChange={bugTitleChange}
         />
 
-        <SimpleMDE
-          placeholder="Describe the bug…"
-          value={bugDescription}
-          onChange={bugDescriptionChange}
-        />
-        
+        <SimpleMDE value={bug?.description} onChange={bugDescriptionChange} />
+
         <Button disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               Submitting <Spinner />
             </>
           ) : (
-            "Submit New Bug"
+            "Submit Bug"
           )}
         </Button>
       </form>
@@ -88,4 +111,4 @@ const NewBugPage = () => {
   );
 };
 
-export default NewBugPage;
+export default EditBug;

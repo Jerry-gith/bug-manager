@@ -8,45 +8,50 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
 import SimpleMDE from "react-simplemde-editor";
+import delay from "delay"
 
-const NewBugPage = () => {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const [bugTitle, setBugTitle] = useState("");
-  const [bugDescription, setBugDescription] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = () => {
-    const bugTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const title = e.target.value;
-      setBugTitle(title);
+const BugForm = async () => {
+
+    const router = useRouter();
+    const [error, setError] = useState("");
+    const [bugTitle, setBugTitle] = useState("");
+    const [bugDescription, setBugDescription] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+  
+    const handleChange = () => {
+      const bugTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const title = e.target.value;
+        setBugTitle(title);
+      };
+      const bugDescriptionChange = useCallback((value: string) => {
+        setBugDescription(value);
+      }, []);
+  
+      return { bugTitleChange, bugDescriptionChange };
     };
-    const bugDescriptionChange = useCallback((value: string) => {
-      setBugDescription(value);
-    }, []);
-
-    return { bugTitleChange, bugDescriptionChange };
-  };
-
-  const { bugTitleChange, bugDescriptionChange } = handleChange();
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    const bugDetails = {
-      title: bugTitle,
-      description: bugDescription,
+  
+    const { bugTitleChange, bugDescriptionChange } = handleChange();
+  
+    const handleSubmit = async (e: FormEvent) => {
+      e.preventDefault();
+  
+      const bugDetails = {
+        title: bugTitle,
+        description: bugDescription,
+      };
+  
+      try {
+        setIsSubmitting(true);
+        await axios.post("/api/bugs", bugDetails);
+        router.push("/bugs");
+      } catch (error) {
+        setIsSubmitting(false);
+        setError(`${error}`);
+      }
     };
-
-    try {
-      setIsSubmitting(true);
-      await axios.post("/api/bugs/create", bugDetails);
-      router.push("/bugs");
-    } catch (error) {
-      setIsSubmitting(false);
-      setError(`${error}`);
-    }
-  };
+  
+    await delay(2000)
 
   return (
     <div>
@@ -73,7 +78,7 @@ const NewBugPage = () => {
           value={bugDescription}
           onChange={bugDescriptionChange}
         />
-        
+
         <Button disabled={isSubmitting}>
           {isSubmitting ? (
             <>
@@ -88,4 +93,4 @@ const NewBugPage = () => {
   );
 };
 
-export default NewBugPage;
+export default BugForm;
