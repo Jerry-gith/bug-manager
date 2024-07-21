@@ -4,7 +4,7 @@ import { Link as RadixLink, Table } from "@radix-ui/themes";
 
 import delay from "delay";
 import Link from "next/link";
-import BugToolBar from "./_components/BugToolBar";
+import BugToolBar from "./_components/BugActions";
 
 const BugsPage = async () => {
   const bugs = await prisma.bug.findMany();

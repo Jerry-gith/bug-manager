@@ -37,23 +37,27 @@ export async function PATCH(
     );
   } catch (error) {
     console.error("Error updating bug:", error);
-    return NextResponse.json({ message: "Internal server error" });
+    return NextResponse.json({ message: `Internal server error: ${error}` });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: { id: string } }) {
   const bug = await prisma.bug.findUnique({
     where: { id: parseInt(params.id) },
   });
 
   if (!bug) return NextResponse.json({ error: "Invalid Bug" }, { status: 404 });
 
-  await prisma.bug.delete({
-    where: { id: bug.id },
-  });
+  try {
+    await prisma.bug.delete({
+      where: { id: bug.id },
+    });
 
-  return NextResponse.json({ message: "Bug deleted successfully!" });
+    return NextResponse.json({ message: "Bug deleted successfully!" });
+  } catch (error) {
+    console.error("Error deleting bug:", error);
+    return NextResponse.json({ message: `Internal server error: ${error}` });
+  }
 }

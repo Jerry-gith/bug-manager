@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client";
 import { notFound } from "next/navigation";
-import BugDetails from "../_components/BugDetails";
+import {BugDetails} from "../_components";
 
 const BugDetailsPage = async ({
   params,

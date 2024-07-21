@@ -1,17 +1,16 @@
 "use client";
 
 import Spinner from "@/components/Spinner";
-import { Button, Callout, TextField } from "@radix-ui/themes";
+import { Button, Callout } from "@radix-ui/themes";
 import axios from "axios";
-import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
-import SimpleMDE from "react-simplemde-editor";
+import { BugForm } from "../_components";
 
 const NewBugPage = () => {
   const router = useRouter();
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [bugTitle, setBugTitle] = useState("");
   const [bugDescription, setBugDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +59,29 @@ const NewBugPage = () => {
         </Callout.Root>
       )}
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <BugForm
+        bugForm={{
+          heading: "New Bug Page",
+          title: bugTitle,
+          description: bugDescription,
+          bugTitleChange,
+          bugDescriptionChange,
+          handleSubmit,
+          Button: (
+            <Button disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  Submitting <Spinner />
+                </>
+              ) : (
+                "Submit New Bug"
+              )}
+            </Button>
+          ),
+        }}
+      />
+
+      {/* <form className="space-y-4" onSubmit={handleSubmit}>
         <h2 className="">New Bug Page</h2>
         <TextField.Root
           variant="surface"
@@ -84,7 +105,7 @@ const NewBugPage = () => {
             "Submit New Bug"
           )}
         </Button>
-      </form>
+      </form> */}
     </div>
   );
 };

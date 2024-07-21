@@ -1,95 +1,46 @@
 "use client";
 
-import Spinner from "@/components/Spinner";
-import { Button, Callout, TextField } from "@radix-ui/themes";
-import axios from "axios";
+import { Bug } from "@prisma/client";
+import { TextField } from "@radix-ui/themes";
 import "easymde/dist/easymde.min.css";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
-import { MdErrorOutline } from "react-icons/md";
+import {
+  ChangeEvent,
+  FormEvent,
+  ReactNode
+} from "react";
 import SimpleMDE from "react-simplemde-editor";
-import delay from "delay"
 
+interface BugFormProp {
+  bugForm: {
+    heading: string;
+    title: Bug["title"];
+    description: Bug["description"];
+    bugTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    bugDescriptionChange: (value: string) => void;
+    handleSubmit: (e: FormEvent) => Promise<void>;
+    Button: ReactNode;
+  };
+}
 
-const BugForm = async () => {
-
-    const router = useRouter();
-    const [error, setError] = useState("");
-    const [bugTitle, setBugTitle] = useState("");
-    const [bugDescription, setBugDescription] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-  
-    const handleChange = () => {
-      const bugTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const title = e.target.value;
-        setBugTitle(title);
-      };
-      const bugDescriptionChange = useCallback((value: string) => {
-        setBugDescription(value);
-      }, []);
-  
-      return { bugTitleChange, bugDescriptionChange };
-    };
-  
-    const { bugTitleChange, bugDescriptionChange } = handleChange();
-  
-    const handleSubmit = async (e: FormEvent) => {
-      e.preventDefault();
-  
-      const bugDetails = {
-        title: bugTitle,
-        description: bugDescription,
-      };
-  
-      try {
-        setIsSubmitting(true);
-        await axios.post("/api/bugs", bugDetails);
-        router.push("/bugs");
-      } catch (error) {
-        setIsSubmitting(false);
-        setError(`${error}`);
-      }
-    };
-  
-    await delay(2000)
-
+const BugForm: React.FC<BugFormProp> = ({ bugForm }) => {
   return (
-    <div>
-      {error && (
-        <Callout.Root variant="surface" color="red" className="mb-4">
-          <Callout.Icon>
-            <MdErrorOutline />
-          </Callout.Icon>
-          <Callout.Text>{error}</Callout.Text>
-        </Callout.Root>
-      )}
+    <form className="space-y-4" onSubmit={bugForm.handleSubmit}>
+      <h2 className="">{bugForm.heading}</h2>
+      <TextField.Root
+        placeholder="What's the bug…"
+        variant="surface"
+        value={bugForm.title}
+        onChange={bugForm.bugTitleChange}
+      />
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <h2 className="">New Bug Page</h2>
-        <TextField.Root
-          variant="surface"
-          placeholder="What's the bug…"
-          value={bugTitle}
-          onChange={bugTitleChange}
-        />
+      <SimpleMDE
+        placeholder="Describe the bug…"
+        value={bugForm.description}
+        onChange={bugForm.bugDescriptionChange}
+      />
 
-        <SimpleMDE
-          placeholder="Describe the bug…"
-          value={bugDescription}
-          onChange={bugDescriptionChange}
-        />
-
-        <Button disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              Submitting <Spinner />
-            </>
-          ) : (
-            "Submit New Bug"
-          )}
-        </Button>
-      </form>
-    </div>
+      {bugForm.Button}
+    </form>
   );
 };
 

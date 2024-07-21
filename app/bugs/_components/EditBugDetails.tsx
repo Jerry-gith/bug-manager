@@ -2,21 +2,19 @@
 
 import Spinner from "@/components/Spinner";
 import { Bug } from "@prisma/client";
-import { Button, Callout, TextField } from "@radix-ui/themes";
+import { Button, Callout } from "@radix-ui/themes";
 import axios from "axios";
-import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
-import SimpleMDE from "react-simplemde-editor";
+import { BugForm } from ".";
 
-const EditBugDetails = ({ id, title, description, status, createdAt }: Bug) => {
+const EditBugDetails: React.FC<Bug> = ({ id, title, description }) => {
   const router = useRouter();
   const [updatedBug, setUpdatedBug] = useState<{
     title?: string;
     description?: string;
   }>({ title, description });
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,7 +57,28 @@ const EditBugDetails = ({ id, title, description, status, createdAt }: Bug) => {
         </Callout.Root>
       )}
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <BugForm
+        bugForm={{
+          heading: "Edit Bug Page",
+          title: title,
+          description: description,
+          bugTitleChange,
+          bugDescriptionChange,
+          handleSubmit,
+          Button: (
+            <Button disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  Submitting <Spinner />
+                </>
+              ) : (
+                "Submit Bug"
+              )}
+            </Button>
+          ),
+        }}
+      />
+      {/* <form className="space-y-4" onSubmit={handleSubmit}>
         <h2 className="">Edit Bug Page</h2>
         <TextField.Root
           variant="surface"
@@ -78,7 +97,7 @@ const EditBugDetails = ({ id, title, description, status, createdAt }: Bug) => {
             "Submit Bug"
           )}
         </Button>
-      </form>
+      </form> */}
     </div>
   );
 };
