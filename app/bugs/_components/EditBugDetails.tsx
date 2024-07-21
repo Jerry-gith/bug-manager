@@ -78,26 +78,6 @@ const EditBugDetails: React.FC<Bug> = ({ id, title, description }) => {
           ),
         }}
       />
-      {/* <form className="space-y-4" onSubmit={handleSubmit}>
-        <h2 className="">Edit Bug Page</h2>
-        <TextField.Root
-          variant="surface"
-          value={title}
-          onChange={bugTitleChange}
-        />
-
-        <SimpleMDE value={description} onChange={bugDescriptionChange} />
-
-        <Button disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              Submitting <Spinner />
-            </>
-          ) : (
-            "Submit Bug"
-          )}
-        </Button>
-      </form> */}
     </div>
   );
 };

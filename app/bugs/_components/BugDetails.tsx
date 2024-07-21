@@ -19,19 +19,21 @@ import Link from "next/link";
 import { useState } from "react";
 import BugStatusBadge from "@/components/BugStatusBadge";
 import { Bug } from "@prisma/client";
+import Spinner from "@/components/Spinner";
 
 const BugDetails = ({ id, title, description, status, createdAt }: Bug) => {
-  console.log("Bug ID:", id); // Debugging line
-
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<boolean | undefined>(undefined);
 
   const handleDelete = async () => {
     try {
-      await axios.delete("/api/bugs/"+ id);
+      setIsDeleting(true);
+      await axios.delete("/api/bugs/" + id);
       router.push("/bugs");
       router.refresh();
     } catch (err) {
+      setIsDeleting(false);
       console.error("Error deleting bug:", err);
       setError(true);
     }
@@ -60,9 +62,21 @@ const BugDetails = ({ id, title, description, status, createdAt }: Bug) => {
 
             <AlertDialog.Root>
               <AlertDialog.Trigger>
-                <Button color="red">
-                  <MdOutlineDeleteSweep className="text-xl" /> Delete Bug
+                <Button disabled={isDeleting} color="red">
+                  {isDeleting ? (
+                    <>
+                      Deleting <Spinner />
+                    </>
+                  ) : (
+                    <>
+                      <MdOutlineDeleteSweep className="text-xl" />
+                      Delete Bug
+                    </>
+                  )}
                 </Button>
+                {/* <Button color="red">
+                  <MdOutlineDeleteSweep className="text-xl" />
+                </Button> */}
               </AlertDialog.Trigger>
               <AlertDialog.Content>
                 <AlertDialog.Title>Confirm Deletion.</AlertDialog.Title>

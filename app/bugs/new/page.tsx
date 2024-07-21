@@ -80,32 +80,6 @@ const NewBugPage = () => {
           ),
         }}
       />
-
-      {/* <form className="space-y-4" onSubmit={handleSubmit}>
-        <h2 className="">New Bug Page</h2>
-        <TextField.Root
-          variant="surface"
-          placeholder="What's the bug…"
-          value={bugTitle}
-          onChange={bugTitleChange}
-        />
-
-        <SimpleMDE
-          placeholder="Describe the bug…"
-          value={bugDescription}
-          onChange={bugDescriptionChange}
-        />
-
-        <Button disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              Submitting <Spinner />
-            </>
-          ) : (
-            "Submit New Bug"
-          )}
-        </Button>
-      </form> */}
     </div>
   );
 };
