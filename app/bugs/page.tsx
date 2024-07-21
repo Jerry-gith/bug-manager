@@ -1,9 +1,10 @@
 import BugStatusBadge from "@/components/BugStatusBadge";
 import prisma from "@/prisma/client";
 import { Link as RadixLink, Table } from "@radix-ui/themes";
-import BugToolBar from "./BugToolBar";
+
 import delay from "delay";
 import Link from "next/link";
+import BugToolBar from "./_components/BugToolBar";
 
 const BugsPage = async () => {
   const bugs = await prisma.bug.findMany();
