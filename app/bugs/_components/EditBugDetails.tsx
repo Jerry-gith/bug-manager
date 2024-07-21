@@ -1,29 +1,33 @@
 "use client";
 
 import Spinner from "@/components/Spinner";
+import { Bug } from "@prisma/client";
 import { Button, Callout, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
 import SimpleMDE from "react-simplemde-editor";
 
-const NewBugPage = () => {
+const EditBugDetails = ({ id, title, description, status, createdAt }: Bug) => {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const [bugTitle, setBugTitle] = useState("");
-  const [bugDescription, setBugDescription] = useState("");
+  const [updatedBug, setUpdatedBug] = useState<{
+    title?: string;
+    description?: string;
+  }>({ title, description });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = () => {
     const bugTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const title = e.target.value;
-      setBugTitle(title);
+      setUpdatedBug({ ...updatedBug, title: e.target.value });
     };
-    const bugDescriptionChange = useCallback((value: string) => {
-      setBugDescription(value);
-    }, []);
+
+    const bugDescriptionChange = (value: string) => {
+      setUpdatedBug({ ...updatedBug, description: value });
+    };
 
     return { bugTitleChange, bugDescriptionChange };
   };
@@ -33,15 +37,10 @@ const NewBugPage = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const bugDetails = {
-      title: bugTitle,
-      description: bugDescription,
-    };
-
     try {
       setIsSubmitting(true);
-      await axios.post("/api/bugs/", bugDetails);
-      router.push("/bugs");
+      await axios.patch(`/api/bugs/${id}`, updatedBug);
+      router.push(`/bugs/${id}/`);
       router.refresh();
     } catch (error) {
       setIsSubmitting(false);
@@ -61,19 +60,14 @@ const NewBugPage = () => {
       )}
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <h2 className="">New Bug Page</h2>
+        <h2 className="">Edit Bug Page</h2>
         <TextField.Root
           variant="surface"
-          placeholder="What's the bug…"
-          value={bugTitle}
+          value={title}
           onChange={bugTitleChange}
         />
 
-        <SimpleMDE
-          placeholder="Describe the bug…"
-          value={bugDescription}
-          onChange={bugDescriptionChange}
-        />
+        <SimpleMDE value={description} onChange={bugDescriptionChange} />
 
         <Button disabled={isSubmitting}>
           {isSubmitting ? (
@@ -81,7 +75,7 @@ const NewBugPage = () => {
               Submitting <Spinner />
             </>
           ) : (
-            "Submit New Bug"
+            "Submit Bug"
           )}
         </Button>
       </form>
@@ -89,4 +83,4 @@ const NewBugPage = () => {
   );
 };
 
-export default NewBugPage;
+export default EditBugDetails;

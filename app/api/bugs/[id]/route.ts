@@ -2,19 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { editBugSchema } from "../../Schema";
 import prisma from "@/prisma/client";
 
-// export async function PATCH(request: NextRequest, {params}: {params: {id: string}}) {
-//     const bugData = await request.json();
-//     const validatedBugData = editBugSchema.safeParse(bugData);
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const editedBugData = await request.json();
+  const validatedBugData = editBugSchema.safeParse(editedBugData);
 
-//     if (!!!validatedBugData.success)
-//         return NextResponse.json(
-//           { message: validatedBugData.error.format() },
-//           { status: 400 }
-//         );
+  if (!!!validatedBugData.success)
+    return NextResponse.json(
+      { error: validatedBugData.error.format() },
+      { status: 400 }
+    );
 
-      
+  const bug = prisma.bug.findUnique({
+    where: { id: parseInt(params.id) },
+  });
 
-// }
+  if (!bug) return NextResponse.json({ error: "Invalid Bug" }, { status: 404 });
+
+  try {
+    const bugID = parseInt(params.id);
+    const updatedBug = await prisma.bug.update({
+      where: { id: bugID },
+      data: {
+        title: editedBugData.title,
+        description: editedBugData.description,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Bug successfully updated!", updatedBug },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating bug:", error);
+    return NextResponse.json({ message: "Internal server error" });
+  }
+}
 
 export async function DELETE(
   request: NextRequest,
@@ -28,7 +53,7 @@ export async function DELETE(
 
   await prisma.bug.delete({
     where: { id: bug.id },
-  })
+  });
 
-  return NextResponse.json({message: "Bug deleted successfully!"})
+  return NextResponse.json({ message: "Bug deleted successfully!" });
 }

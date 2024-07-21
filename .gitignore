@@ -37,3 +37,6 @@ next-env.d.ts
 
 # bug
 bugLog.txt
+
+# misc
+/_misc/
