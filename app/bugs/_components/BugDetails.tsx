@@ -20,11 +20,21 @@ import { useState } from "react";
 import BugStatusBadge from "@/components/BugStatusBadge";
 import { Bug } from "@prisma/client";
 import Spinner from "@/components/Spinner";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/authProvider/authOptions";
 
-const BugDetails = ({ id, title, description, status, createdAt }: Bug) => {
+const BugDetails = async ({
+  id,
+  title,
+  description,
+  status,
+  createdAt,
+}: Bug) => {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<boolean | undefined>(undefined);
+
+  const session = await getServerSession(authOptions);
 
   const handleDelete = async () => {
     try {
@@ -53,54 +63,53 @@ const BugDetails = ({ id, title, description, status, createdAt }: Bug) => {
           </Card>
         </Box>
 
-        <Box className="mt-2 md:mt-0">
-          <Flex direction="column" gap="2">
-            <Button color="violet">
-              <FiEdit />
-              <Link href={`/bugs/${id}/edit`}>Edit Bug</Link>
-            </Button>
+        {session && (
+          <Box className="mt-2 md:mt-0">
+            <Flex direction="column" gap="2">
+              <Button color="violet">
+                <FiEdit />
+                <Link href={`/bugs/${id}/edit`}>Edit Bug</Link>
+              </Button>
 
-            <AlertDialog.Root>
-              <AlertDialog.Trigger>
-                <Button disabled={isDeleting} color="red">
-                  {isDeleting ? (
-                    <>
-                      Deleting <Spinner />
-                    </>
-                  ) : (
-                    <>
-                      <MdOutlineDeleteSweep className="text-xl" />
-                      Delete Bug
-                    </>
-                  )}
-                </Button>
-                {/* <Button color="red">
-                  <MdOutlineDeleteSweep className="text-xl" />
-                </Button> */}
-              </AlertDialog.Trigger>
-              <AlertDialog.Content>
-                <AlertDialog.Title>Confirm Deletion.</AlertDialog.Title>
-                <AlertDialog.Description>
-                  Are you sure you want to delete this bug? This action cannot
-                  be undone!
-                </AlertDialog.Description>
-                <Flex mt="4" gap="3">
-                  <AlertDialog.Cancel>
-                    <Button variant="surface" color="gray">
-                      Cancel
-                    </Button>
-                  </AlertDialog.Cancel>
+              <AlertDialog.Root>
+                <AlertDialog.Trigger>
+                  <Button disabled={isDeleting} color="red">
+                    {isDeleting ? (
+                      <>
+                        Deleting <Spinner />
+                      </>
+                    ) : (
+                      <>
+                        <MdOutlineDeleteSweep className="text-xl" />
+                        Delete Bug
+                      </>
+                    )}
+                  </Button>
+                </AlertDialog.Trigger>
+                <AlertDialog.Content>
+                  <AlertDialog.Title>Confirm Deletion.</AlertDialog.Title>
+                  <AlertDialog.Description>
+                    Are you sure you want to delete this bug? This action cannot
+                    be undone!
+                  </AlertDialog.Description>
+                  <Flex mt="4" gap="3">
+                    <AlertDialog.Cancel>
+                      <Button variant="surface" color="gray">
+                        Cancel
+                      </Button>
+                    </AlertDialog.Cancel>
 
-                  <AlertDialog.Action>
-                    <Button color="red" onClick={handleDelete}>
-                      Delete Bug
-                    </Button>
-                  </AlertDialog.Action>
-                </Flex>
-              </AlertDialog.Content>
-            </AlertDialog.Root>
-          </Flex>
-        </Box>
+                    <AlertDialog.Action>
+                      <Button color="red" onClick={handleDelete}>
+                        Delete Bug
+                      </Button>
+                    </AlertDialog.Action>
+                  </Flex>
+                </AlertDialog.Content>
+              </AlertDialog.Root>
+            </Flex>
+          </Box>
+        )}
       </Grid>
 
       <AlertDialog.Root open={error}>
