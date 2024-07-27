@@ -3,19 +3,26 @@ import prisma from "@/prisma/client";
 import { Link as RadixLink, Table, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { BugActions } from "./_components";
+import { Status } from "@prisma/client";
 
-const BugsPage = async () => {
-  const bugs = await prisma.bug.findMany();
+const BugsPage = async ({
+  searchParams,
+}: {
+  searchParams: { status: Status };
+}) => {
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+
+  const bugs = await prisma.bug.findMany({
+    where: { status },
+  });
 
   return (
     <div className="space-y-4">
       <Text weight="bold">All Bugs</Text>
-      {/* <Flex justify="between">
-        <Text weight="bold">All Bugs</Text>
-        <Button>
-          <Link href={"/bugs/new"}>New Bug</Link>
-        </Button>
-      </Flex> */}
+
       <BugActions />
 
       <Table.Root variant="surface">

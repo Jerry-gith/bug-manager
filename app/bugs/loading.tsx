@@ -8,12 +8,12 @@ const BugLoading = () => {
 
   return (
     <div className="space-y-4">
+      <Text weight="bold">All Bugs</Text>
+
       <Flex justify="between">
-        <Text weight="bold">All Bugs</Text>
-        <Button>
-          <Link href={"/bugs/new"}>New Bug</Link>
-        </Button>
+        <Skeleton />
       </Flex>
+      
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
