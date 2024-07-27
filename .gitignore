@@ -36,8 +36,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# bug
-bugLog.txt
-
 # misc
 /_misc/
+bugLog.txt

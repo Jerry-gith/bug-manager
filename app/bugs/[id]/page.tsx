@@ -14,9 +14,6 @@ const BugDetailsPage = async ({
     id: string;
   };
 }) => {
-  // const bugDetail = await prisma.bug.findUnique({
-  //   where: { id: parseInt(params.id) },
-  // });
 
   const bugDetail = await fetchUser(parseInt(params.id));
 
@@ -44,7 +41,7 @@ export async function generateMetadata({
     id: string;
   };
 }) {
-  
+
   const bug= await fetchUser(parseInt(params.id));
 
   return {
