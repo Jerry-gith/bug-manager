@@ -67,7 +67,7 @@ const AssignBugToAUser = ({ bug }: { bug: Bug }) => {
         <Select.Content>
           <Select.Group>
             <Select.Label>Bug Managers</Select.Label>
-            <Select.Item value="null">Unassigned</Select.Item>
+            <Select.Item value={"null"}>Unassigned</Select.Item>
             {users.map((user) => (
               <Select.Item key={user.id} value={user.id}>
                 {user.name}
