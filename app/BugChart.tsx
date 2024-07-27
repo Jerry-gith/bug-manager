@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { Card } from "@radix-ui/themes";
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from "recharts";
@@ -9,7 +9,7 @@ interface Props {
   closed: number;
 }
 
-const BugChart: React.FC<Props> = ({open, inProgress, closed}) => {
+const BugChart: React.FC<Props> = ({ open, inProgress, closed }) => {
   const data = [
     { label: "Open", value: open },
     { label: "In Progress", value: inProgress },
@@ -19,12 +19,12 @@ const BugChart: React.FC<Props> = ({open, inProgress, closed}) => {
     <Card>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
-          <XAxis dataKey="label"/>
+          <XAxis dataKey="label" />
           <YAxis />
           <Bar
             dataKey="value"
             barSize={60}
-            style={{ fill: 'var(--accent-9)' }}
+            style={{ fill: "var(--accent-9)" }}
           />
         </BarChart>
       </ResponsiveContainer>

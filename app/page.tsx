@@ -1,8 +1,9 @@
-import LatestBugs from "./LatestBugs";
-import { Heading, Text } from "@radix-ui/themes";
-import BugSummary from "./BugSummary";
 import prisma from "@/prisma/client";
+import { Flex, Grid } from "@radix-ui/themes";
+import { Metadata } from "next";
 import BugChart from "./BugChart";
+import BugSummary from "./BugSummary";
+import LatestBugs from "./LatestBugs";
 
 export default async function Home() {
   const openBugCount = await prisma.bug.count({
@@ -17,23 +18,29 @@ export default async function Home() {
     where: { status: "CLOSED" },
   });
   return (
-    <div className="space-y-4 mt-4">
-      <Heading size="4" color="crimson">
-        Latest Bugs
-      </Heading>
+    <Grid columns={{ initial: "1", md: "2" }} gap="5">
+      <Flex direction="column" gap="5">
+        <BugSummary
+          open={openBugCount}
+          inProgress={inProgressBugCount}
+          closed={closedBugCount}
+        />
+
+        <BugChart
+          open={openBugCount}
+          inProgress={inProgressBugCount}
+          closed={closedBugCount}
+        />
+      </Flex>
 
       <LatestBugs />
-      
-      <BugChart
-        open={openBugCount}
-        inProgress={inProgressBugCount}
-        closed={closedBugCount}
-      />
-      <BugSummary
-        open={openBugCount}
-        inProgress={inProgressBugCount}
-        closed={closedBugCount}
-      />
-    </div>
+    </Grid>
   );
 }
+
+// export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: "Bug Manager - Dashboard",
+  description: "View a summary of project bugs.",
+};
