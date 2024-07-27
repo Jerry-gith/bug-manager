@@ -19,6 +19,7 @@ const EditBug = async ({ params }: { params: { id: string } }) => {
       status={bug.status}
       createdAt={bug.createdAt}
       updatedAt={bug.updatedAt}
+      userId={bug.userId}
     />
   );
 };

@@ -1,5 +1,8 @@
 "use client";
 
+import BugStatusBadge from "@/components/BugStatusBadge";
+import Spinner from "@/components/Spinner";
+import { Bug } from "@prisma/client";
 import {
   AlertDialog,
   Box,
@@ -10,31 +13,30 @@ import {
   Heading,
   Text,
 } from "@radix-ui/themes";
+import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
-import axios from "axios";
-import Link from "next/link";
-import { useState } from "react";
-import BugStatusBadge from "@/components/BugStatusBadge";
-import { Bug } from "@prisma/client";
-import Spinner from "@/components/Spinner";
-import { getServerSession } from "next-auth";
-import authOptions from "@/app/authProvider/authOptions";
+import { AssignBugToAUser } from ".";
+import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 
-const BugDetails = async ({
+const BugDetails: React.FC<Bug> = ({
   id,
   title,
   description,
   status,
   createdAt,
-}: Bug) => {
+  updatedAt,
+  userId
+}) => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<boolean | undefined>(undefined);
-
-  const session = await getServerSession(authOptions);
 
   const handleDelete = async () => {
     try {
@@ -63,9 +65,13 @@ const BugDetails = async ({
           </Card>
         </Box>
 
-        {session && (
+        {typeof window !== "undefined" && session && (
           <Box className="mt-2 md:mt-0">
-            <Flex direction="column" gap="2">
+            <Flex direction="column" gap="3">
+              <AssignBugToAUser
+                bug={{id, title, description, status, createdAt, updatedAt, userId}}
+              />
+
               <Button color="violet">
                 <FiEdit />
                 <Link href={`/bugs/${id}/edit`}>Edit Bug</Link>
@@ -132,5 +138,7 @@ const BugDetails = async ({
     </>
   );
 };
+
+// export default dynamic(() => Promise.resolve(BugDetails), { ssr: false });
 
 export default BugDetails;

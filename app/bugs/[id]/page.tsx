@@ -24,8 +24,7 @@ const BugDetailsPage = async ({
       description={bugDetail.description}
       status={bugDetail.status}
       createdAt={bugDetail.createdAt}
-      updatedAt={bugDetail.updatedAt}
-    />
+      updatedAt={bugDetail.updatedAt} userId={"1"}    />
   );
 };
 

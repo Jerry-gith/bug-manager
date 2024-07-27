@@ -1,16 +1,19 @@
-import { Table } from "@radix-ui/themes";
+import { Button, Flex, Table, Text } from "@radix-ui/themes";
+import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import BugToolBar from "./_components/BugActions";
 
 const BugLoading = () => {
   const bugs = [1, 2, 3, 4, 5, 6];
 
   return (
     <div className="space-y-4">
-      <h2>Bugs Page</h2>
-      <BugToolBar />
-
+      <Flex justify="between">
+        <Text weight="bold">All Bugs</Text>
+        <Button>
+          <Link href={"/bugs/new"}>New Bug</Link>
+        </Button>
+      </Flex>
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { editBugSchema } from "../../Schema";
+import { patchBugSchema } from "../../Schema";
 import prisma from "@/prisma/client";
 
 export async function PATCH(
@@ -7,13 +7,21 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const editedBugData = await request.json();
-  const validatedBugData = editBugSchema.safeParse(editedBugData);
+  const validatedBugData = patchBugSchema.safeParse(editedBugData);
 
   if (!!!validatedBugData.success)
     return NextResponse.json(
       { error: validatedBugData.error.format() },
       { status: 400 }
     );
+
+  const { userId, title, description } = editedBugData;
+
+  if (userId) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user)
+      return NextResponse.json({ error: "Invalid User" }, { status: 400 });
+  }
 
   const bug = prisma.bug.findUnique({
     where: { id: parseInt(params.id) },
@@ -26,8 +34,9 @@ export async function PATCH(
     const updatedBug = await prisma.bug.update({
       where: { id: bugID },
       data: {
-        title: editedBugData.title,
-        description: editedBugData.description,
+        title,
+        description,
+        userId,
       },
     });
 
@@ -43,7 +52,8 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }) {
+  { params }: { params: { id: string } }
+) {
   const bug = await prisma.bug.findUnique({
     where: { id: parseInt(params.id) },
   });

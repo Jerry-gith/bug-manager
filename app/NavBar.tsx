@@ -13,7 +13,7 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { useSession } from "next-auth/react";
-import Spinner from "@/components/Spinner";
+import Skeleton from "@/components/Skeleton";
 
 const NavBar = () => {
   const currentPath = usePathname();
@@ -52,7 +52,7 @@ const NavBar = () => {
           </Flex>
 
           <Box>
-            {status === "loading" && <Spinner />}
+            {status === "loading" && <Skeleton width={"5rem"} />}
             {status === "authenticated" && (
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
