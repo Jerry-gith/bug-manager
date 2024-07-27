@@ -42,5 +42,5 @@ export default async function Home() {
 
 export const metadata: Metadata = {
   title: "Bug Manager - Dashboard",
-  description: "View a summary of project bugs.",
+  description: "View a summary of project bugs",
 };

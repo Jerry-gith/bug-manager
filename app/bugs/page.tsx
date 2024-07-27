@@ -43,6 +43,6 @@ const BugsPage = async ({ searchParams }: { searchParams: BugQuery }) => {
 export default BugsPage;
 
 export const metadata: Metadata = {
-  title: "Bug Manager- Bug List",
+  title: "Bug Manager - All Bug",
   description: "View all project bugs",
 };
