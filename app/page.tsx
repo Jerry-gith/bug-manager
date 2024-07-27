@@ -2,6 +2,7 @@ import LatestBugs from "./LatestBugs";
 import { Heading, Text } from "@radix-ui/themes";
 import BugSummary from "./BugSummary";
 import prisma from "@/prisma/client";
+import BugChart from "./BugChart";
 
 export default async function Home() {
   const openBugCount = await prisma.bug.count({
@@ -20,7 +21,14 @@ export default async function Home() {
       <Heading size="4" color="crimson">
         Latest Bugs
       </Heading>
+
       <LatestBugs />
+      
+      <BugChart
+        open={openBugCount}
+        inProgress={inProgressBugCount}
+        closed={closedBugCount}
+      />
       <BugSummary
         open={openBugCount}
         inProgress={inProgressBugCount}
