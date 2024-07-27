@@ -3,20 +3,39 @@ import prisma from "@/prisma/client";
 import { Link as RadixLink, Table, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { BugActions } from "./_components";
-import { Status } from "@prisma/client";
+import { Bug, Status } from "@prisma/client";
+import { Metadata } from "next";
+import { IoArrowUpCircleOutline } from "react-icons/io5";
 
 const BugsPage = async ({
   searchParams,
 }: {
-  searchParams: { status: Status };
+  searchParams: { status: Status; orderBy: keyof Bug };
 }) => {
+  const columns: {
+    label: string;
+    value: keyof Bug;
+    className?: string;
+  }[] = [
+    { label: "Bugs", value: "title" },
+    { label: "Status", value: "status", className: "hidden md:table-cell" },
+    { label: "Date", value: "createdAt", className: "hidden md:table-cell" },
+  ];
+
   const statuses = Object.values(Status);
   const status = statuses.includes(searchParams.status)
     ? searchParams.status
     : undefined;
 
+  const orderBy = columns
+    .map((column) => column.value)
+    .includes(searchParams.orderBy)
+    ? { [searchParams.orderBy]: "asc" }
+    : undefined;
+
   const bugs = await prisma.bug.findMany({
     where: { status },
+    orderBy,
   });
 
   return (
@@ -28,13 +47,23 @@ const BugsPage = async ({
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>Bugs</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Status
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="hidden md:table-cell">
-              Date
-            </Table.ColumnHeaderCell>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell
+                key={column.value}
+                className={column.className}
+              >
+                <Link
+                  href={{
+                    query: { ...searchParams, orderBy: column.value },
+                  }}
+                >
+                  {column.label}
+                </Link>
+                {column.value === searchParams.orderBy && (
+                  <IoArrowUpCircleOutline className="inline ml-1" />
+                )}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
         </Table.Header>
 
@@ -67,3 +96,57 @@ const BugsPage = async ({
 // export const dynamic = 'force-dynamic'
 
 export default BugsPage;
+
+export const metadata: Metadata = {
+  title: "Bug Manager- Bug List",
+  description: "View all project bugs",
+};
+
+// import Pagination from '@/app/components/Pagination';
+// import prisma from '@/prisma/client';
+// import { Status } from '@prisma/client';
+// import IssueActions from './IssueActions';
+// import IssueTable, { IssueQuery, columnNames } from './IssueTable';
+// import { Flex } from '@radix-ui/themes';
+// import { Metadata } from 'next';
+
+// interface Props {
+//   searchParams: IssueQuery
+// }
+
+// const IssuesPage = async ({ searchParams }: Props) => {
+//   const statuses = Object.values(Status);
+//   const status = statuses.includes(searchParams.status)
+//     ? searchParams.status
+//     : undefined;
+//   const where = { status };
+
+//   const orderBy = columnNames
+//     .includes(searchParams.orderBy)
+//     ? { [searchParams.orderBy]: 'asc' }
+//     : undefined;
+
+//   const page = parseInt(searchParams.page) || 1;
+//   const pageSize = 10;
+
+//   const issues = await prisma.issue.findMany({
+//     where,
+//     orderBy,
+//     skip: (page - 1) * pageSize,
+//     take: pageSize,
+//   });
+
+//   const issueCount = await prisma.issue.count({ where });
+
+//   return (
+//     <Flex direction="column" gap="3">
+//       <IssueActions />
+//       <IssueTable searchParams={searchParams} issues={issues} />
+//       <Pagination
+//         pageSize={pageSize}
+//         currentPage={page}
+//         itemCount={issueCount}
+//       />
+//     </Flex>
+//   );
+// };
