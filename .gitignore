@@ -39,3 +39,5 @@ next-env.d.ts
 # misc
 /_misc/
 bugLog.txt
+# Sentry Config File
+.env.sentry-build-plugin
