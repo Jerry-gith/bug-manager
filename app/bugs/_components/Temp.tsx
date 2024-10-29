@@ -8,7 +8,19 @@ import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDeleteSweep } from "react-icons/md";
 import Spinner from "@/components/Spinner";
-import { AssignBugToAUser } from ".";
+
+
+type AssignBugToAUserProps = {
+  userId: string;
+};
+
+const AssignBugToAUser: React.FC<AssignBugToAUserProps> = ({ userId }) => {
+  return (
+    <div>
+      Assigned to user: {userId}
+    </div>
+  );
+};
 
 const ClientOnlyControls: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
@@ -31,7 +43,8 @@ const ClientOnlyControls: React.FC<{ id: string }> = ({ id }) => {
   return (
     <Box className="mt-2 md:mt-0">
       <Flex direction="column" gap="3">
-        <AssignBugToAUser user={"User"} />
+
+        <AssignBugToAUser userId="user" />
 
         <Button color="violet">
           <FiEdit />
