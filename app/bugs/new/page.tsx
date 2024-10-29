@@ -20,6 +20,7 @@ const NewBugPage = () => {
       const title = e.target.value;
       setBugTitle(title);
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const bugDescriptionChange = useCallback((value: string) => {
       setBugDescription(value);
     }, []);

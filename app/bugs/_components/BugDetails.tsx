@@ -122,7 +122,7 @@ const BugDetails: React.FC<Bug> = ({
         <AlertDialog.Content>
           <AlertDialog.Title>Error</AlertDialog.Title>
           <AlertDialog.Description color="red">
-            This bug couldn't be deleted due to some error! Kindly, try again
+            This bug couldn&apos;t be deleted due to some error! Kindly, try again
             later.
           </AlertDialog.Description>
           <Button
